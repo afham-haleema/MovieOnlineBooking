@@ -8,7 +8,6 @@ A web-based application that allows users to book movie tickets, select showtime
 - [Features](#features)
 - [Screenshots](#screenshots)
 - [Technologies Used](#technologies-used)
-- [Links](#links)
 - [Author](#author)
 - [Additional Information](#additional-information)
 
