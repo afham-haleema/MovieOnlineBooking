@@ -35,7 +35,7 @@ The Movie Booking System provides a seamless way for users to browse available m
 ## 🛠️ Technologies Used
 
 - **Frontend:** HTML, CSS, JavaScript 
-- **Backend:** PHP
+- **Backend:** PHP, Apache
 - **Database:** MySQL
 
 ## 👤 Author  
