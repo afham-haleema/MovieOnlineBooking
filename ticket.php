@@ -3,44 +3,51 @@ include 'header.php';
 include 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $seat_ids = $_POST['seat_ids'];
+    $name        = $_POST['name'];
+    $email       = $_POST['email'];
+    $phone       = $_POST['phone'];
+    $seat_ids    = $_POST['seat_ids'];
     $showtime_id = $_POST['showtime_id'];
     $total_price = $_POST['total_price'];
 
-    $seat_array = explode(',', $seat_ids);
-    $total_tickets = count($seat_array);
+    $seat_array     = explode(',', $seat_ids);
+    $total_tickets  = count($seat_array);
 
     // Fetch movie details
     $sql = "SELECT movies.title, showtimes.show_date, showtimes.show_time 
             FROM showtimes 
             JOIN movies ON showtimes.movie_id = movies.movie_id
-            WHERE showtimes.showtime_id = $showtime_id";
+            WHERE showtimes.showtime_id = :showtime_id";
 
-    $result=$conn->query($sql);
-    $movie = $result->fetch_assoc();
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['showtime_id' => $showtime_id]);
+    $movie = $stmt->fetch(PDO::FETCH_ASSOC);
 
     $date_time = $movie['show_date'] . ' ' . $movie['show_time'];
 
-
+    // Insert booking details
     $insert_sql = "INSERT INTO users (name, email, phone_number, movie, date_time, tickets, seats)
-                   VALUES (?, ?, ?, ?, ?, ?, ?)";
+                   VALUES (:name, :email, :phone, :movie, :date_time, :tickets, :seats)";
     
-    $stmt = $conn->prepare($insert_sql);
-    $stmt->bind_param("sssssis", $name, $email, $phone, $movie['title'], $date_time, $total_tickets, $seat_ids);
-    $stmt->execute();
+    $stmt = $pdo->prepare($insert_sql);
+    $stmt->execute([
+        'name'      => $name,
+        'email'     => $email,
+        'phone'     => $phone,
+        'movie'     => $movie['title'],
+        'date_time' => $date_time,
+        'tickets'   => $total_tickets,
+        'seats'     => $seat_ids
+    ]);
 
-    // Get last inserted ID for displaying
-    $booking_id = $stmt->insert_id;
+    // Get last inserted ID
+    $booking_id = $pdo->lastInsertId();
 
-    // Retrieve stored details
-    $sql = "SELECT * FROM users WHERE user_id = $booking_id";
-    $result=$conn->query($sql);
-    $booking = $result->fetch_assoc();
+    // Retrieve stored booking
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = :booking_id");
+    $stmt->execute(['booking_id' => $booking_id]);
+    $booking = $stmt->fetch(PDO::FETCH_ASSOC);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -70,8 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h2><?= htmlspecialchars($booking['date_time']) ?></h2>
             <span>Date & Time</span>
         </div>
-        
-        
     </div>
 
     <div class="card cardRight">
@@ -82,8 +87,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </div>
 </div>
-<?php
-include 'footer.php';
-?>
+<?php include 'footer.php'; ?>
 </body>
 </html>

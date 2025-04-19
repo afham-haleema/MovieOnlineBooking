@@ -2,17 +2,10 @@
 include 'db.php';
 
 $movie_id = $_GET['movie_id'];
-$sql = "SELECT showtime_id, show_date, show_time FROM showtimes WHERE movie_id = $movie_id";
-$result=$conn->query($sql);
 
-$showtimes = [];
-while ($row = $result->fetch_assoc()) {
-    $showtimes[] = $row;
-}
-
-
-$conn->close();
-
+$stmt = $pdo->prepare("SELECT showtime_id, show_date, show_time FROM showtimes WHERE movie_id = ?");
+$stmt->execute([$movie_id]);
+$showtimes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <html>
@@ -34,41 +27,23 @@ $conn->close();
     <div class="container">
         <div class="screen"></div>
         <h1>Screen</h1>
-        
-        <div class="row">
-            <div class="seat" data-seat-id="A1"></div>
-            <div class="seat" data-seat-id="A2"></div>
-            <div class="seat" data-seat-id="A3"></div>
-            <div class="seat" data-seat-id="A4"></div>
-            <div class="seat" data-seat-id="A5"></div>
-            <div class="seat" data-seat-id="A6"></div>
-            <div class="seat" data-seat-id="A7"></div>
-            <div class="seat" data-seat-id="A8"></div>
-            <div class="seat" data-seat-id="A9"></div>
-        </div>
 
-        <div class="row">
-            <div class="seat" data-seat-id="B1"></div>
-            <div class="seat" data-seat-id="B2"></div>
-            <div class="seat" data-seat-id="B3"></div>
-            <div class="seat" data-seat-id="B4"></div>
-            <div class="seat" data-seat-id="B5"></div>
-            <div class="seat" data-seat-id="B6"></div>
-            <div class="seat" data-seat-id="B7"></div>
-            <div class="seat" data-seat-id="B8"></div>
-            <div class="seat" data-seat-id="B9"></div>
-        </div>
+        <!-- Seat rows -->
+        <?php
+        $rows = [
+            ['A1','A2','A3','A4','A5','A6','A7','A8','A9'],
+            ['B1','B2','B3','B4','B5','B6','B7','B8','B9'],
+            ['C1','C2','C3','C4','C5','C6','C7']
+        ];
 
-        <div class="row">
-            <div class="seat" data-seat-id="C1"></div>
-            <div class="seat" data-seat-id="C2"></div>
-            <div class="seat" data-seat-id="C3"></div>
-            <div class="seat" data-seat-id="C4"></div>
-            <div class="seat" data-seat-id="C5"></div>
-            <div class="seat" data-seat-id="C6"></div>
-            <div class="seat" data-seat-id="C7"></div>
-        </div>
-
+        foreach ($rows as $row) {
+            echo "<div class='row'>";
+            foreach ($row as $seat) {
+                echo "<div class='seat' data-seat-id='$seat'></div>";
+            }
+            echo "</div>";
+        }
+        ?>
     </div>
 
     <p class="text">
@@ -81,8 +56,8 @@ $conn->close();
 
     <div class="showtime-buttons">
         <?php foreach ($showtimes as $showtime): ?>
-            <button type="button" class="showtime-btn" data-showtime-id="<?= $showtime['showtime_id'] ?>">
-                <?= $showtime['show_date'] ?> <?= $showtime['show_time'] ?>
+            <button type="button" class="showtime-btn" data-showtime-id="<?= htmlspecialchars($showtime['showtime_id']) ?>">
+                <?= htmlspecialchars($showtime['show_date']) ?> <?= htmlspecialchars($showtime['show_time']) ?>
             </button>
         <?php endforeach; ?>
     </div>
@@ -102,10 +77,7 @@ const bookingForm = document.getElementById('bookingForm');
 
 let selectedSeats = [];
 let selectedShowtimeId = "";
-const ticketPrice = 4; // Price per ticket
-
-
-
+const ticketPrice = 4;
 
 seats.forEach(seat => {
     seat.addEventListener('click', () => {
@@ -122,8 +94,6 @@ seats.forEach(seat => {
     });
 });
 
-
-
 function updateSeatInfo() {
     selectedSeatIdsInput.value = selectedSeats.join(',');
     countDisplay.textContent = selectedSeats.length;
@@ -139,11 +109,10 @@ showtimeButtons.forEach(button => {
         this.classList.add('selected');
         selectedShowtimeId = this.getAttribute('data-showtime-id');
         document.getElementById('selected_showtime_id').value = selectedShowtimeId;
-        updateSeatInfo(); 
+        updateSeatInfo();
     });
 });
 
-// Navigate to payment page on click
 bookButton.addEventListener('click', () => {
     bookingForm.submit();
 });
