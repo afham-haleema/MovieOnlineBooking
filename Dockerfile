@@ -18,4 +18,4 @@ RUN composer install
 
 # Expose port and start the PHP built-in server
 EXPOSE 10000
-CMD ["php", "-S", "0.0.0.0:10000", "home.php"]
+CMD ["php", "-S", "0.0.0.0:10000", "router.php"]
