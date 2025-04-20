@@ -62,7 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="body">
 <div class="cardWrap">
     <p><strong>Successful - </strong>Thank you for booking with us!</p>
-    
     <div class="card cardLeft">
         <h1 class="ticketTitle">Affa <span>Cinema</span></h1>
         <div class="title">

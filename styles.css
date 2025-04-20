@@ -2,6 +2,7 @@
 html ,body{
 	height: 100%;
 	margin: 0;
+    overflow-x: hidden;
 	background-image: linear-gradient(to bottom right, rgb(235, 76, 171), rgb(227, 77, 171), rgb(218, 78, 170), rgb(210, 80, 170), rgb(202, 81, 170), rgb(193, 82, 170), rgb(185, 83, 169), rgb(176, 84, 169), rgb(168, 85, 169), rgb(160, 87, 169), rgb(151, 88, 168), rgb(143, 89, 168));
 }
 
@@ -618,6 +619,65 @@ input[type="text"], input[type="email"], input[type="number"] {
       width: 100%;
       word-break:break-all;
     }
+  }
+
+  @media (min-width:320px) and (max-width:720px) {
+    .logo img{
+        height: 25px;
+    }
+    .cards{
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 280px ;
+    }
+    .movie-media {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .info-container {
+        width: 95vw;
+    }
+    .cardWrap {
+        width: 90%;
+        height: auto;
+      }
+    
+      .card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+      }
+    
+      .cardLeft {
+        width: 100%;
+        height: auto;
+        border-radius: 8px 8px 0 0;
+      }
+    
+      .cardRight {
+        width: 100%;
+        height: auto;
+        border-left: none;
+        border-top: .18em dashed #1b1b1b;
+        border-radius: 0 0 8px 8px;
+        flex-direction: row;
+        justify-content: space-around;
+      }
+    
+      .cardRight::before,
+      .cardRight::after {
+        display: none;
+      }
+    
+      .cardLeft h1 {
+        font-size: 1em;
+        transform: none;
+        text-align: center;
+      }
+     
   }
 
   
