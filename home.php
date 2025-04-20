@@ -16,7 +16,7 @@ include 'db.php';
 
 try {
     $sql = "SELECT movie_id, title, img, genre, duration FROM movies"; 
-    $stmt = $pdo->query($sql); // No need to prepare if no parameters
+    $stmt = $pdo->query($sql); 
 
     $movies = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
